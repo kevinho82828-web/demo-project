@@ -20,6 +20,11 @@
 - **Keine halben Sachen:** Verwende niemals Platzhalter wie `// rest of the code here`. Schreibe immer den vollständigen, direkt lauffähigen Code.
 - **Kommentare & Berechnungen:** Erkläre komplexe Logik, Trading-Formeln oder mathematische Berechnungen immer mit kurzen Kommentaren auf Deutsch. Erkläre das *Warum*, nicht nur das *Was*.
 
+# ?? LOGA & Doku3 (Vertragsvorlagen)
+- **Inhalte 1:1, Formatierung nach Zielvorlage:** Beim Anpassen von Vorlagen in LOGA Doku3 werden die Textinhalte und LOGA-Felder (`<input class="ReadOnlyRedactorField LGFroalaDropField">`) immer exakt 1:1 übernommen. Nur die Formatierung (Schriftart, Abstände, Layout) wird an die gewünschte Zielvorlage angepasst.
+- **Einheitliche Schrift:** Jeder Text UND jedes LOGA-Feld muss in `<span style="font-family: Helvetica; font-size: 11pt; color: rgb(0, 0, 0);">` eingebettet sein – sonst fällt der Editor auf die Standardschrift zurück und der Signaturblock wirkt anders als der Vertragstext.
+- **Signaturblöcke:** Unterschriftslinien als `border-top: thin solid black` auf einem `div` mit fester Breite (ca. 240px) direkt über dem Namen – nicht als Border auf der ganzen Tabellenzelle. Vor jeder Linie ca. 3 Leerzeilen als Platz für die echte Unterschrift. Layout: 1. Unterschrift (Arbeitgeber) allein oben links, darunter 2. Unterschrift links und Arbeitnehmer/in rechts nebeneinander.
+
 # ?? APIs & Externe Referenzen
 - **Externe Daten:** [Hier können später Links rein, z. B. zu TradingView-Skripten, API-Schnittstellen oder Finanz-Datenbanken]
 
