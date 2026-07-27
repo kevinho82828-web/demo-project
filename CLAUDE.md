@@ -10,9 +10,14 @@
 - **Risikomanagement & Hebelprodukte:** Berechne beim potenziellen Einsatz von gehebelten Derivaten (z.B. Knock-Out-Zertifikaten) immer das exakte Chance-Risiko-Verhältnis (CRV). Definiere präzise Einstiegspunkte, Support-Zonen sowie Knock-Out-Level und warne aktiv vor Event-Risiken.
 
 # ??? Tech Stack & Setup
-- **Technologien:** [Hier später eintragen, z. B. HTML, CSS, JavaScript, Python oder Pine Script]
-- **Entwicklungs-Befehle:** [Wie startest du das Projekt? z. B. "Einfach die index.html im Browser öffnen"]
+- **Technologien:** Python 3 mit `python-pptx` für die Erzeugung/Bearbeitung von PowerPoint-Dateien. Kontrolle des Layouts über LibreOffice (`soffice --convert-to pdf`) + `pdftoppm` als Bild-Render.
+- **Entwicklungs-Befehle:**
+  - Organigramm neu bauen: `python3 scripts/build_organigramm.py` (liest die Original-Datei aus `organigramm/`, schreibt die formatierte Fassung dorthin zurück)
+  - Optische Kontrolle: `soffice --headless --convert-to pdf --outdir . <datei>.pptx && pdftoppm -jpeg -r 150 <datei>.pdf slide`
 - **Projektstruktur:** Halte den Projektordner immer aufgeräumt. Quellcode, Styling und externe Assets gehören in separate, logisch benannte Ordner.
+  - `organigramm/` – PowerPoint-Dateien (Original + formatierte Fassung)
+  - `scripts/` – Python-Skripte zur Erzeugung/Formatierung
+- **Grundsatz Dokumente:** Layout-Arbeiten an Kundendokumenten werden immer als reproduzierbares Skript abgelegt, nie als einmalige Handarbeit. Das Original bleibt unverändert im Repo liegen, damit jede Änderung nachvollziehbar und wiederholbar ist.
 
 # ??? Anti-Fehler & Code-Qualität
 - **Logische Vollständigkeit:** Schreibe immer kugelsichere Logik. Bei Wenn-Dann-Bedingungen (IF-Abfragen oder Excel-Formeln) darf niemals das 3. Argument (der "Else"-Fall / Sonst-Wert) vergessen oder undefiniert gelassen werden, um "False"-Outputs oder Bugs zu vermeiden.
