@@ -1,0 +1,142 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/view-formatting.schema.json",
+  "height": 250,
+  "width": 340,
+  "hideSelection": true,
+  "formatter": {
+    "elmType": "div",
+    "style": {
+      "background-color": "#ffffff",
+      "border": "1px solid #EDEBE9",
+      "border-left": "5px solid #E2001A",
+      "border-radius": "6px",
+      "padding": "18px 20px",
+      "box-sizing": "border-box",
+      "height": "100%",
+      "overflow": "hidden",
+      "font-family": "'Segoe UI', system-ui, sans-serif"
+    },
+    "children": [
+      {
+        "elmType": "div",
+        "style": {
+          "display": "flex",
+          "align-items": "center",
+          "margin-bottom": "14px"
+        },
+        "children": [
+          {
+            "elmType": "span",
+            "style": {
+              "font-size": "22px",
+              "margin-right": "10px"
+            },
+            "txtContent": "[$Symbol]"
+          },
+          {
+            "elmType": "span",
+            "style": {
+              "font-size": "17px",
+              "font-weight": "700",
+              "color": "#323130",
+              "white-space": "nowrap",
+              "overflow": "hidden"
+            },
+            "txtContent": "[$Title]"
+          },
+          {
+            "elmType": "span",
+            "style": {
+              "margin-left": "auto",
+              "font-size": "10px",
+              "font-weight": "700",
+              "letter-spacing": "0.4px",
+              "text-transform": "uppercase",
+              "border-radius": "4px",
+              "padding": "3px 8px",
+              "white-space": "nowrap",
+              "background-color": "=if([$Status] == 'läuft', '#FCEBED', if([$Status] == 'geplant', '#EFF6FC', '#F3F2F1'))",
+              "color": "=if([$Status] == 'läuft', '#B80015', if([$Status] == 'geplant', '#005A9E', '#605E5C'))"
+            },
+            "txtContent": "[$Status]"
+          }
+        ]
+      },
+      {
+        "elmType": "div",
+        "style": {
+          "display": "=if([$Punkt1] == '', 'none', 'flex')",
+          "margin-bottom": "6px",
+          "font-size": "14px",
+          "line-height": "1.45",
+          "color": "#323130"
+        },
+        "children": [
+          {
+            "elmType": "span",
+            "style": {
+              "color": "#E2001A",
+              "font-weight": "700",
+              "margin-right": "8px"
+            },
+            "txtContent": "•"
+          },
+          {
+            "elmType": "span",
+            "txtContent": "[$Punkt1]"
+          }
+        ]
+      },
+      {
+        "elmType": "div",
+        "style": {
+          "display": "=if([$Punkt2] == '', 'none', 'flex')",
+          "margin-bottom": "6px",
+          "font-size": "14px",
+          "line-height": "1.45",
+          "color": "#323130"
+        },
+        "children": [
+          {
+            "elmType": "span",
+            "style": {
+              "color": "#E2001A",
+              "font-weight": "700",
+              "margin-right": "8px"
+            },
+            "txtContent": "•"
+          },
+          {
+            "elmType": "span",
+            "txtContent": "[$Punkt2]"
+          }
+        ]
+      },
+      {
+        "elmType": "div",
+        "style": {
+          "display": "=if([$Punkt3] == '', 'none', 'flex')",
+          "margin-bottom": "6px",
+          "font-size": "14px",
+          "line-height": "1.45",
+          "color": "#323130"
+        },
+        "children": [
+          {
+            "elmType": "span",
+            "style": {
+              "color": "#E2001A",
+              "font-weight": "700",
+              "margin-right": "8px"
+            },
+            "txtContent": "•"
+          },
+          {
+            "elmType": "span",
+            "txtContent": "[$Punkt3]"
+          }
+        ]
+      }
+    ]
+  }
+}
