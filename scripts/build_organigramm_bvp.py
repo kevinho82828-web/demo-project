@@ -20,6 +20,7 @@ from pptx.util import Emu, Pt
 from pptx.enum.shapes import MSO_CONNECTOR
 from pptx.enum.text import MSO_ANCHOR
 from pptx.oxml.ns import qn
+from lxml import etree
 import copy
 
 SRC = "organigramm/20250206_Organigramm_BVP_original.pptx"
@@ -91,6 +92,37 @@ def el(tag, **attrs):
     return e
 
 
+# Kindelement-Reihenfolge laut OOXML-Schema. Ein Element an der falschen
+# Stelle oder doppelt macht die Datei fuer PowerPoint unlesbar, waehrend
+# LibreOffice und python-pptx sie klaglos oeffnen.
+ORDER_BODYPR = ["prstTxWarp", "noAutofit", "normAutofit", "spAutoFit",
+                "scene3d", "sp3d", "flatTx", "extLst"]
+ORDER_RPR = ["ln", "noFill", "solidFill", "gradFill", "blipFill", "pattFill",
+             "grpFill", "effectLst", "effectDag", "highlight", "uLnTx", "uLn",
+             "uFillTx", "uFill", "latin", "ea", "cs", "sym", "hlinkClick",
+             "hlinkMouseOver", "rtl", "extLst"]
+
+
+def put_in_order(parent, child, order, gruppe=()):
+    """Kindelement schema-konform einsetzen.
+
+    'gruppe' nennt die Elemente, die sich gegenseitig ausschliessen (z. B. die
+    Autofit- oder die Fuell-Varianten). Vorhandene Vertreter der Gruppe werden
+    vorher entfernt, damit kein Duplikat entsteht.
+    """
+    tag = etree.QName(child).localname
+    for name in (gruppe or (tag,)):
+        for alt in parent.findall(qn("a:" + name)):
+            parent.remove(alt)
+    ziel = order.index(tag)
+    for vorhanden in list(parent):
+        name = etree.QName(vorhanden).localname
+        if name in order and order.index(name) > ziel:
+            vorhanden.addprevious(child)
+            return
+    parent.append(child)          # Sonst-Fall: nichts Spaeteres da -> ans Ende
+
+
 def paragraphs(tf):
     return tf._txBody.findall(qn("a:p"))
 
@@ -150,16 +182,15 @@ def title_pPr(p):
 
 def set_body(tf, anchor="t"):
     bodyPr = tf._txBody.find(qn("a:bodyPr"))
-    for tag in ("a:normAutofit", "a:spAutoFit"):
-        e = bodyPr.find(qn(tag))
-        if e is not None:
-            bodyPr.remove(e)
     bodyPr.set("anchor", anchor)
     bodyPr.set("lIns", "108000")
     bodyPr.set("rIns", "108000")
     bodyPr.set("tIns", "54000")
     bodyPr.set("bIns", "54000")
-    bodyPr.append(el("noAutofit"))
+    # Autofit aus: die Kaestchen sollen exakt die gesetzte Groesse behalten.
+    # Alle drei Autofit-Varianten schliessen sich gegenseitig aus.
+    put_in_order(bodyPr, el("noAutofit"), ORDER_BODYPR,
+                 gruppe=("noAutofit", "normAutofit", "spAutoFit"))
 
 
 def add_line(shapes, x1, y1, x2, y2, name):
@@ -304,11 +335,11 @@ for tc in head.findall(qn("a:tc")):
         rPr = r.find(qn("a:rPr"))
         white = el("solidFill")
         white.append(el("schemeClr", val="bg1"))
-        eff = rPr.find(qn("a:effectLst"))
-        if eff is not None:
-            eff.addprevious(white)   # Fuellung muss vor effectLst stehen
-        else:
-            rPr.append(white)
+        # Die dritte Spalte bringt bereits eine eigene Fuellung mit - die muss
+        # weichen, sonst stehen zwei Fuellungen im selben rPr.
+        put_in_order(rPr, white, ORDER_RPR,
+                     gruppe=("noFill", "solidFill", "gradFill", "blipFill",
+                             "pattFill", "grpFill"))
 tblEl.insert(list(tblEl).index(first_tr), head)
 
 # einheitliche Zeilenhoehen - im Original schwankten sie zwischen 181064 und 187397

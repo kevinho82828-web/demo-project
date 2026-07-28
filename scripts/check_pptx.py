@@ -10,6 +10,8 @@ Aufruf:  python3 scripts/check_pptx.py organigramm/*.pptx
 Rueckgabewert 0 = alles sauber, 1 = mindestens ein Befund.
 """
 import collections
+import io
+import os
 import re
 import sys
 import zipfile
@@ -17,6 +19,17 @@ import zipfile
 # Microsoft-Erweiterungs-IDs. Doppelte Werte lehnt PowerPoint ab, das
 # offizielle Schema kennt diesen Namespace gar nicht.
 A16_IDS = ("rowId", "colId", "creationId")
+
+# Das PowerPoint-Schema. Erster Treffer gewinnt.
+SCHEMA_ORTE = (
+    "/root/.claude/skills/pptx/scripts/office/schemas/"
+    "ISO-IEC29500-4_2016/pml.xsd",
+    os.path.join(os.path.dirname(__file__), "schemas", "pml.xsd"),
+)
+
+# Bekannte Abweichungen der Transdev-Vorlage, die PowerPoint nachweislich
+# oeffnet: buSzPct wird dort als Ganzzahl statt als Prozentwert geschrieben.
+TOLERIERT = ("buSzPct",)
 
 
 def pruefe(pfad):
@@ -71,7 +84,12 @@ def pruefe(pfad):
         if fehlend:
             befunde.append("%s: nicht deklarierte rIds %s" % (ziel, sorted(fehlend)))
 
-    # 4) laesst sich ueberhaupt wieder einlesen
+    # 4) XSD-Prüfung der Folien gegen das PowerPoint-Schema.
+    #    Nur NEUE Fehler zaehlen: manche Vorlagen bringen bereits eigene
+    #    Schemaverstoesse mit, die PowerPoint nachweislich toleriert.
+    befunde += xsd_befunde(z, pfad)
+
+    # 5) laesst sich ueberhaupt wieder einlesen
     try:
         from pptx import Presentation
         Presentation(pfad)
@@ -79,6 +97,36 @@ def pruefe(pfad):
         befunde.append("python-pptx kann die Datei nicht oeffnen: %s" % e)
 
     return befunde
+
+
+def xsd_befunde(z, pfad):
+    """Folien-XML gegen pml.xsd pruefen. Leere Liste, wenn kein Schema da ist."""
+    try:
+        from lxml import etree
+    except ImportError:
+        return []
+    schema_pfad = None
+    for kandidat in SCHEMA_ORTE:
+        if os.path.exists(kandidat):
+            schema_pfad = kandidat
+            break
+    if schema_pfad is None:
+        # Sonst-Fall bewusst benannt: ohne Schema wird nicht stillschweigend
+        # "alles ok" gemeldet, sondern der uebersprungene Schritt angezeigt.
+        print("        (Hinweis: pml.xsd nicht gefunden, XSD-Pruefung uebersprungen)")
+        return []
+    schema = etree.XMLSchema(etree.parse(schema_pfad))
+    raus = []
+    for teil in sorted(n for n in z.namelist()
+                       if n.startswith("ppt/slides/slide") and n.endswith(".xml")):
+        doc = etree.parse(io.BytesIO(z.read(teil)))
+        if schema.validate(doc):
+            continue
+        for e in schema.error_log:
+            if any(t in e.message for t in TOLERIERT):
+                continue
+            raus.append("%s: %s" % (teil, e.message))
+    return raus
 
 
 def main(pfade):

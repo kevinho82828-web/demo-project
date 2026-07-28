@@ -31,8 +31,16 @@
 
 # ?? Lessons Learned (Fehler-Tagebuch)
 
-## PPTX: Geklonte Tabellenzeilen brechen die Datei in PowerPoint (28.07.2026)
-- **Fehler:** Beim Ergänzen einer Kopfzeile habe ich die erste Datenzeile per `copy.deepcopy` geklont. Der Klon brachte die `<a16:rowId>` der Quellzeile mit — die ID war danach doppelt vergeben. PowerPoint meldete beim Öffnen "Datei kann nicht gelesen werden".
-- **Warum es durchgerutscht ist:** Weder LibreOffice noch die XSD-Prüfung noch `python-pptx` stören sich an doppelten `a16`-IDs. Sie stehen in einem Microsoft-Erweiterungs-Namespace, den das offizielle Schema gar nicht kennt. Der Rendering-Test sah deshalb völlig sauber aus.
-- **Lösung:** Nach jedem `deepcopy` eines `<a:tr>`, `<a:tc>` oder `<p:sp>` das `<a:extLst>` entfernen. Die IDs sind reine Co-Authoring-Metadaten und werden nicht gebraucht.
-- **Regel für die Zukunft:** Optische Kontrolle über LibreOffice reicht als Abnahme **nicht** aus. Vor der Auslieferung jeder PPTX zusätzlich prüfen: doppelte `a16:rowId` / `a16:colId` / `a16:creationId`, doppelte `p:cNvPr id`, fehlende `rId`-Beziehungen, Content-Types-Abdeckung. Diese Klasse von Fehlern ist unsichtbar, bis der Kunde die Datei öffnet.
+## PPTX: "Datei kann nicht gelesen werden" — Reihenfolge der XML-Kindelemente (28.07.2026)
+- **Fehler:** Beim Bearbeiten des BVP-Organigramms habe ich neue Kindelemente per `append()` bzw. `addprevious()` in bestehende XML-Knoten gesetzt. Drei Verstöße kamen dabei zusammen:
+  1. `<a:noAutofit/>` an `<a:bodyPr>` angehängt, obwohl dort schon eines stand → **doppeltes Autofit-Element**.
+  2. `<a:solidFill>` in ein `<a:rPr>` eingefügt, das bereits eine Füllung hatte → **zwei Füllungen im selben Run**.
+  3. Tabellenzeile per `copy.deepcopy` geklont → **doppelte `<a16:rowId>`**.
+  PowerPoint verweigert daraufhin das Öffnen. Die Datei sah dabei völlig normal aus.
+- **Warum es zweimal durchgerutscht ist:** LibreOffice, `python-pptx` und das Prüfskript des pptx-Skills haben alle drei Fehler klaglos akzeptiert — der PDF-Render war jedes Mal einwandfrei. Erst die direkte Validierung von `ppt/slides/slide1.xml` gegen `pml.xsd` mit `lxml.etree.XMLSchema` hat sie gezeigt. Beim ersten Anlauf habe ich nur den `a16`-Befund behoben und die Datei erneut ausgeliefert, ohne die Schema-Prüfung nachzuholen — deshalb war sie immer noch kaputt.
+- **Lösung:** Kindelemente nie blind anhängen. Position aus der Schema-Reihenfolge bestimmen und Vertreter derselben Auswahlgruppe vorher entfernen (`put_in_order()` in `scripts/build_organigramm_bvp.py`). Nach `deepcopy` immer `<a:extLst>` entfernen.
+- **Regeln für die Zukunft:**
+  - Optische Kontrolle über LibreOffice ist **kein** Nachweis, dass eine Datei in PowerPoint öffnet. Ein sauberer Render sagt über die XML-Gültigkeit nichts aus.
+  - Vor jeder Auslieferung `python3 scripts/check_pptx.py <datei>` laufen lassen: XSD-Prüfung der Folien, doppelte `a16`- und Form-IDs, fehlende `rId`-Beziehungen, Content-Types-Abdeckung.
+  - Wenn ein Fehler gemeldet wird: **erst die Ursache vollständig einkreisen, dann liefern.** Nicht den erstbesten Befund beheben und hoffen.
+  - Ein Prüfskript ist erst dann etwas wert, wenn es nachweislich gegen die kaputte Fassung anschlägt. Immer gegengetestet werden (`git show <commit>:<datei>`).
