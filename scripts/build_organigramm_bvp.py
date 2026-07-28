@@ -268,6 +268,15 @@ first_tr = tblEl.findall(qn("a:tr"))[0]
 
 # Kopfzeile: Klon der ersten Datenzeile, damit Stil und Raender identisch sind
 head = copy.deepcopy(first_tr)
+# WICHTIG: Der Klon bringt die a16:rowId der Quellzeile mit. Doppelte IDs
+# laesst PowerPoint nicht durch ("Datei kann nicht gelesen werden"), waehrend
+# LibreOffice und die XSD-Pruefung sie klaglos akzeptieren. Die IDs sind reine
+# Co-Authoring-Metadaten und duerfen ersatzlos entfallen.
+for ext in head.findall(qn("a:extLst")):
+    head.remove(ext)
+for tc in head.findall(qn("a:tc")):
+    for ext in tc.findall(qn("a:extLst")):
+        tc.remove(ext)
 for tc, label in zip(head.findall(qn("a:tc")), TBL_HEAD):
     for p in tc.findall(".//" + qn("a:p")):
         for r in p.findall(qn("a:r"))[1:]:

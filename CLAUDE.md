@@ -14,9 +14,10 @@
 - **Entwicklungs-Befehle:**
   - Organigramme neu bauen: `python3 scripts/build_organigramm_recht.py` bzw. `python3 scripts/build_organigramm_bvp.py` (lesen die Original-Datei aus `organigramm/`, schreiben die formatierte Fassung dorthin zurück)
   - Optische Kontrolle: `soffice --headless --convert-to pdf --outdir . <datei>.pptx && pdftoppm -jpeg -r 150 <datei>.pdf slide`
+  - **Pflicht vor jeder Auslieferung:** `python3 scripts/check_pptx.py organigramm/*.pptx` (fängt PowerPoint-Fehler ab, die LibreOffice nicht zeigt)
 - **Projektstruktur:** Halte den Projektordner immer aufgeräumt. Quellcode, Styling und externe Assets gehören in separate, logisch benannte Ordner.
   - `organigramm/` – PowerPoint-Dateien (Original + formatierte Fassung)
-  - `scripts/` – je ein Python-Skript pro Organigramm (`build_organigramm_<bereich>.py`)
+  - `scripts/` – je ein Python-Skript pro Organigramm (`build_organigramm_<bereich>.py`) plus `check_pptx.py` als Abnahme-Prüfung
 - **Grundsatz Dokumente:** Layout-Arbeiten an Kundendokumenten werden immer als reproduzierbares Skript abgelegt, nie als einmalige Handarbeit. Das Original bleibt unverändert im Repo liegen, damit jede Änderung nachvollziehbar und wiederholbar ist.
 
 # ??? Anti-Fehler & Code-Qualität
@@ -29,4 +30,9 @@
 - **Externe Daten:** [Hier können später Links rein, z. B. zu TradingView-Skripten, API-Schnittstellen oder Finanz-Datenbanken]
 
 # ?? Lessons Learned (Fehler-Tagebuch)
-- *Diese Sektion wird von Claude im Laufe des Projekts automatisch befüllt, wenn Fehler behoben werden.*
+
+## PPTX: Geklonte Tabellenzeilen brechen die Datei in PowerPoint (28.07.2026)
+- **Fehler:** Beim Ergänzen einer Kopfzeile habe ich die erste Datenzeile per `copy.deepcopy` geklont. Der Klon brachte die `<a16:rowId>` der Quellzeile mit — die ID war danach doppelt vergeben. PowerPoint meldete beim Öffnen "Datei kann nicht gelesen werden".
+- **Warum es durchgerutscht ist:** Weder LibreOffice noch die XSD-Prüfung noch `python-pptx` stören sich an doppelten `a16`-IDs. Sie stehen in einem Microsoft-Erweiterungs-Namespace, den das offizielle Schema gar nicht kennt. Der Rendering-Test sah deshalb völlig sauber aus.
+- **Lösung:** Nach jedem `deepcopy` eines `<a:tr>`, `<a:tc>` oder `<p:sp>` das `<a:extLst>` entfernen. Die IDs sind reine Co-Authoring-Metadaten und werden nicht gebraucht.
+- **Regel für die Zukunft:** Optische Kontrolle über LibreOffice reicht als Abnahme **nicht** aus. Vor der Auslieferung jeder PPTX zusätzlich prüfen: doppelte `a16:rowId` / `a16:colId` / `a16:creationId`, doppelte `p:cNvPr id`, fehlende `rId`-Beziehungen, Content-Types-Abdeckung. Diese Klasse von Fehlern ist unsichtbar, bis der Kunde die Datei öffnet.
