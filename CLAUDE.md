@@ -24,4 +24,15 @@
 - **Externe Daten:** [Hier können später Links rein, z. B. zu TradingView-Skripten, API-Schnittstellen oder Finanz-Datenbanken]
 
 # ?? Lessons Learned (Fehler-Tagebuch)
-- *Diese Sektion wird von Claude im Laufe des Projekts automatisch befüllt, wenn Fehler behoben werden.*
+
+## 2026-07-28 — Empfehlung ohne Kenntnis der Quelldatei abgegeben
+- **Fehler:** Auf die Frage „HTML-Entwurf 1:1 in SharePoint nachbauen" habe ich SPFx (SharePoint Framework) empfohlen und eine lange Analyse zu Admin-Rechten, App-Katalog und Developer-Tenants geschrieben — **bevor** ich die HTML-Datei gesehen hatte. Grundlage war die allgemeine Annahme „moderne SharePoint-Seiten erlauben kein freies HTML, also braucht 1:1 zwingend Custom Code".
+- **Warum das falsch war:** Die Datei war von vornherein als SharePoint-Mockup gebaut und nutzte ausschließlich native Webparts. Sie enthielt sogar eine eingebaute Nachbau-Anleitung. Der komplette SPFx-Pfad war überflüssig — der Nachbau geht ohne Admin-Rechte und ohne Programmierung.
+- **Lösung / Regel für die Zukunft:** **Erst die Quelldatei lesen, dann die Architektur bewerten.** Wenn der Nutzer eine Datei erwähnt, die noch nicht vorliegt, zuerst danach fragen und die Empfehlung zurückstellen — statt eine Analyse auf einer Annahme aufzubauen. Eine plausible Verallgemeinerung ersetzt keinen Blick in die konkrete Datei.
+
+# ?? Tech Stack & Setup (Projekt „WeMoveHer")
+- **Ziel:** Redesign der Intranetseite `lehub.sharepoint.com/sites/DE_Intranet/HR/Vielfalt & Netzwerke`
+- **Entwurf:** `design/Frauennetzwerk-Entwurf.html` — reines HTML/CSS-Mockup, im Browser öffnen
+- **Umsetzung:** `design/AUFBAU-ANLEITUNG.md` — Nachbau mit nativen SharePoint-Webparts
+- **Randbedingungen:** Kein SharePoint-Admin, kein App-Katalog vorhanden → **kein SPFx, kein Custom Code**. Alles muss mit Bordmitteln moderner SharePoint-Seiten funktionieren.
+- **Theme-Farbe:** Transdev-Rot `#E2001A`
