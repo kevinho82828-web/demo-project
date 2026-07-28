@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>„Wie geht es weiter?" — Gestaltungsvarianten für SharePoint</title>
+<style>
+  /* ============================================================
+     Varianten für den Abschnitt „Wie geht es weiter?"
+     Alle Varianten sind mit nativen SharePoint-Webparts umsetzbar.
+     Farben und Schrift wie im Hauptentwurf.
+     ============================================================ */
+  :root {
+    --themePrimary: #E2001A;
+    --themeDark: #B80015;
+    --themeSoft: #FCEBED;
+    --neutralBg: #F5F5F5;
+    --textColor: #323130;
+    --textSubtle: #605E5C;
+    --line: #EDEBE9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", "Segoe UI Web", system-ui, -apple-system, Helvetica, Arial, sans-serif;
+    color: var(--textColor);
+    background: #EDEBE9;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4, p, li, a, span { overflow-wrap: anywhere; }
+
+  /* ---------- Seitenrahmen der Vergleichsseite ---------- */
+  .page { max-width: 1300px; margin: 0 auto; padding: 40px 24px 80px; }
+  .page > header { margin-bottom: 32px; }
+  .page > header h1 { font-size: 30px; font-weight: 700; margin-bottom: 8px; }
+  .page > header p { color: var(--textSubtle); max-width: 780px; }
+
+  /* ---------- Variantenblock ---------- */
+  .variant { background: #fff; border-radius: 10px; margin-bottom: 40px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.1); }
+  .variant > .head {
+    background: #1B5E20; color: #fff; padding: 16px 26px;
+    display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  }
+  .variant > .head .tag {
+    background: rgba(255,255,255,.2); border-radius: 999px;
+    padding: 2px 12px; font-size: 12px; font-weight: 700; letter-spacing: .5px;
+  }
+  .variant > .head h2 { font-size: 19px; font-weight: 700; }
+  .variant > .head .rec { background: #FFD54F; color: #1B5E20; }
+  .variant > .meta {
+    background: #F0F7F0; padding: 14px 26px; font-size: 13.5px; color: #1B5E20;
+    border-bottom: 1px solid #D6E6D6; display: grid; gap: 6px;
+  }
+  .variant > .meta b { font-weight: 700; }
+  .variant > .stage { padding: 0; }
+  .stage-inner { padding: 44px 40px; }
+  .bg-neutral { background: var(--neutralBg); }
+  .bg-soft { background: var(--themeSoft); }
+
+  h2.sec { font-size: 28px; font-weight: 700; color: var(--themePrimary); margin-bottom: 6px; }
+  p.lead { color: var(--textSubtle); margin-bottom: 30px; max-width: 720px; }
+
+  .cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 900px) { .cols3 { grid-template-columns: 1fr; } }
+
+  /* ============================================================
+     VARIANTE 1 — Meilenstein-Karten
+     ============================================================ */
+  .mk {
+    background: #fff; border-radius: 8px; padding: 30px 28px 26px;
+    border-top: 4px solid var(--themePrimary);
+    box-shadow: 0 1.6px 3.6px rgba(0,0,0,.10);
+    position: relative; overflow: hidden; height: 100%;
+  }
+  .mk .num {
+    position: absolute; top: 6px; right: 16px;
+    font-size: 72px; font-weight: 800; line-height: 1;
+    color: var(--themePrimary); opacity: .12; letter-spacing: -3px;
+  }
+  .mk .icon { font-size: 32px; display: block; margin-bottom: 12px; }
+  .mk h3 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .mk .kicker {
+    font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--themePrimary); margin-bottom: 14px;
+  }
+  ul.check { list-style: none; }
+  ul.check li {
+    position: relative; padding: 7px 0 7px 26px; font-size: 15px; line-height: 1.5;
+    border-top: 1px solid var(--line);
+  }
+  ul.check li:first-child { border-top: none; }
+  ul.check li::before {
+    content: "✓"; position: absolute; left: 0; top: 7px;
+    color: var(--themePrimary); font-weight: 700;
+  }
+
+  /* ============================================================
+     VARIANTE 2 — Zuklappbare Abschnitte
+     ============================================================ */
+  .acc { border-top: 1px solid #D2D0CE; }
+  .acc:last-of-type { border-bottom: 1px solid #D2D0CE; }
+  .acc > button {
+    width: 100%; background: none; border: none; cursor: pointer;
+    font-family: inherit; font-size: 19px; font-weight: 700; color: var(--textColor);
+    display: flex; align-items: center; gap: 14px; padding: 20px 4px; text-align: left;
+  }
+  .acc > button .chev { margin-left: auto; color: var(--themePrimary); font-size: 15px; transition: transform .18s; }
+  .acc.open > button .chev { transform: rotate(90deg); }
+  .acc > button .ico { font-size: 24px; }
+  .acc > button .cnt {
+    font-size: 12px; font-weight: 700; color: #fff; background: var(--themePrimary);
+    border-radius: 999px; padding: 1px 9px;
+  }
+  .acc .body { display: none; padding: 0 4px 24px 42px; }
+  .acc.open .body { display: block; }
+
+  /* ============================================================
+     VARIANTE 3 — Kachel-Navigation + Detailblock
+     ============================================================ */
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 34px; }
+  @media (max-width: 900px) { .tiles { grid-template-columns: 1fr; } }
+  .tile-btn {
+    background: var(--themePrimary); color: #fff; border-radius: 8px;
+    padding: 26px 20px; text-align: center; text-decoration: none; display: block;
+    box-shadow: 0 1.6px 3.6px rgba(0,0,0,.14);
+  }
+  .tile-btn .ico { font-size: 34px; display: block; margin-bottom: 10px; }
+  .tile-btn .t { font-size: 17px; font-weight: 700; display: block; }
+  .tile-btn .s { font-size: 13px; opacity: .9; display: block; margin-top: 3px; }
+  .detail { background: #fff; border-radius: 8px; padding: 28px; box-shadow: 0 1.6px 3.6px rgba(0,0,0,.08); height: 100%; }
+  .detail h3 { font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--themePrimary); }
+  .detail ul { list-style: none; }
+  .detail li { padding: 6px 0 6px 20px; position: relative; font-size: 14.5px; }
+  .detail li::before { content: "›"; position: absolute; left: 4px; color: var(--themePrimary); font-weight: 700; }
+
+  /* ============================================================
+     VARIANTE 4 — Listen-Karten mit Status
+     ============================================================ */
+  .lcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 900px) { .lcards { grid-template-columns: 1fr; } }
+  .lcard {
+    background: #fff; border: 1px solid var(--line); border-left: 5px solid var(--themePrimary);
+    border-radius: 6px; padding: 22px 22px 18px; height: 100%;
+  }
+  .lcard .top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .lcard .top .ico { font-size: 24px; }
+  .lcard .top h3 { font-size: 18px; font-weight: 700; }
+  .badge {
+    font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+    border-radius: 4px; padding: 3px 9px; margin-left: auto; white-space: nowrap;
+  }
+  .b-run { background: #FCEBED; color: var(--themeDark); }
+  .b-plan { background: #EFF6FC; color: #005A9E; }
+  .b-cont { background: #F3F2F1; color: #605E5C; }
+  .lcard ul { list-style: none; }
+  .lcard li { font-size: 14.5px; padding: 5px 0 5px 18px; position: relative; }
+  .lcard li::before { content: "•"; position: absolute; left: 2px; color: var(--themePrimary); font-weight: 700; }
+
+  /* ============================================================
+     BONUS — Partnernetzwerke als eigenes Band
+     ============================================================ */
+  .partners { text-align: center; }
+  .partners h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .partners p.sub { color: var(--textSubtle); font-size: 15px; margin-bottom: 24px; }
+  .plogos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  @media (max-width: 900px) { .plogos { grid-template-columns: 1fr; } }
+  .plogo {
+    background: #fff; border: 1px solid var(--line); border-radius: 8px;
+    padding: 26px 16px; font-weight: 600; font-size: 15px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    min-height: 110px;
+  }
+  .plogo .ph {
+    width: 100%; max-width: 150px; height: 42px; border-radius: 4px;
+    background: linear-gradient(135deg, #d8d4d0, #b9b5b1); color: #5f5c59;
+    display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600;
+  }
+
+  /* ---------- Fußnote ---------- */
+  .note { background: #FFF8E1; border-left: 4px solid #F9A825; padding: 18px 22px; border-radius: 0 6px 6px 0; margin-top: 26px; font-size: 14.5px; }
+  .note b { color: #8D6E00; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <h1>„Wie geht es weiter?" — vier Gestaltungsvarianten</h1>
+  <p>Alle vier Varianten sind ohne SPFx, ohne App-Katalog und ohne Admin-Rechte umsetzbar. Der grüne Balken über jeder Variante nennt die verwendeten Webparts und den Aufwand. Ganz unten steht ein Zusatzvorschlag zu den Partnernetzwerken.</p>
+</header>
+
+<!-- ══════════════════ VARIANTE 1 ══════════════════ -->
+<div class="variant">
+  <div class="head">
+    <span class="tag rec">Empfehlung</span>
+    <h2>Variante 1 — Meilenstein-Karten</h2>
+  </div>
+  <div class="meta">
+    <div><b>Webparts:</b> 3-Spalten-Abschnitt (Hintergrund „Neutral") · je Spalte 1 Text-Webpart</div>
+    <div><b>Aufwand:</b> gering — reine Textarbeit, keine Bilder nötig</div>
+    <div><b>Was besser wird:</b> Die großen Ziffern geben Reihenfolge und Blickführung. Die Häkchen ersetzen die Word-Optik der Standard-Aufzählung. Die Kicker-Zeile ordnet jede Karte zeitlich ein.</div>
+  </div>
+  <div class="stage bg-neutral">
+    <div class="stage-inner">
+      <h2 class="sec">Wie geht es weiter?</h2>
+      <p class="lead">Drei Schwerpunkte, an denen wir in den kommenden Monaten arbeiten.</p>
+      <div class="cols3">
+        <div class="mk">
+          <span class="num">01</span>
+          <span class="icon">📊</span>
+          <div class="kicker">Kurzfristig</div>
+          <h3>Ergebnisse</h3>
+          <ul class="check">
+            <li>Ergebnisse aus Arbeitsgruppen veröffentlichen</li>
+            <li>Diskussion der Themen, u.a. mit der Geschäftsführung</li>
+            <li>Unseren Beitrag zum Kulturwandel leisten</li>
+          </ul>
+        </div>
+        <div class="mk">
+          <span class="num">02</span>
+          <span class="icon">🌱</span>
+          <div class="kicker">Laufend</div>
+          <h3>Wachstum</h3>
+          <ul class="check">
+            <li>Netzwerk weiter ausbauen</li>
+            <li>Mitmach-Möglichkeiten für operative Mitarbeiterinnen schaffen</li>
+            <li>Sprecherinnen und Organisationsgremium weiter auf- und ausbauen</li>
+          </ul>
+        </div>
+        <div class="mk">
+          <span class="num">03</span>
+          <span class="icon">🔗</span>
+          <div class="kicker">Dauerhaft</div>
+          <h3>Vernetzen</h3>
+          <ul class="check">
+            <li>Vernetzung über Transdev hinaus ausbauen</li>
+            <li>Bestehende Partnerschaften vertiefen</li>
+            <li>Gemeinsame Formate mit anderen Netzwerken entwickeln</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note">
+        <b>Umsetzung der großen Ziffer:</b> Als eigene Zeile über der Überschrift, formatiert als „Überschrift 1". SharePoint färbt sie über das Website-Design automatisch rot. Der verblasste Wasserzeichen-Effekt aus diesem Entwurf entsteht so nicht — die Ziffer steht dann normal rot und kräftig über dem Titel. Wer den dezenten Effekt exakt will, legt die Ziffern einmal als kleine PNG an und setzt ein Bild-Webpart darüber.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ VARIANTE 2 ══════════════════ -->
+<div class="variant">
+  <div class="head">
+    <span class="tag">Platzsparend</span>
+    <h2>Variante 2 — Zuklappbare Abschnitte</h2>
+  </div>
+  <div class="meta">
+    <div><b>Webparts:</b> 3 × 1-Spalten-Abschnitt mit Abschnittseinstellung <b>„Zuklappbar"</b> · je 1 Text-Webpart</div>
+    <div><b>Aufwand:</b> gering</div>
+    <div><b>Was besser wird:</b> Die Seite ist sehr lang. Hier schrumpfen die drei Blöcke auf drei Zeilen zusammen. Wer mehr wissen will, klickt auf. Die Zahl neben dem Titel zeigt, wie viel dahintersteckt.</div>
+  </div>
+  <div class="stage">
+    <div class="stage-inner">
+      <h2 class="sec">Wie geht es weiter?</h2>
+      <p class="lead">Klick auf einen Bereich, um die Details zu sehen.</p>
+
+      <div class="acc open">
+        <button onclick="this.parentNode.classList.toggle('open')">
+          <span class="ico">📊</span> Ergebnisse <span class="cnt">3</span> <span class="chev">▶</span>
+        </button>
+        <div class="body">
+          <ul class="check">
+            <li>Ergebnisse aus Arbeitsgruppen veröffentlichen</li>
+            <li>Diskussion der Themen, u.a. mit der Geschäftsführung</li>
+            <li>Unseren Beitrag zum Kulturwandel leisten</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="acc">
+        <button onclick="this.parentNode.classList.toggle('open')">
+          <span class="ico">🌱</span> Wachstum <span class="cnt">3</span> <span class="chev">▶</span>
+        </button>
+        <div class="body">
+          <ul class="check">
+            <li>Netzwerk weiter ausbauen</li>
+            <li>Mitmach-Möglichkeiten für operative Mitarbeiterinnen schaffen</li>
+            <li>Sprecherinnen und Organisationsgremium weiter auf- und ausbauen</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="acc">
+        <button onclick="this.parentNode.classList.toggle('open')">
+          <span class="ico">🔗</span> Vernetzen <span class="cnt">3</span> <span class="chev">▶</span>
+        </button>
+        <div class="body">
+          <ul class="check">
+            <li>Vernetzung über Transdev hinaus ausbauen</li>
+            <li>Bestehende Partnerschaften vertiefen</li>
+            <li>Gemeinsame Formate mit anderen Netzwerken entwickeln</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note">
+        <b>Hinweis:</b> Die Zahl in der roten Pille tippst du von Hand in die Abschnittsüberschrift. Ob dein SharePoint bereits zuklappbare Abschnitte anbietet, siehst du unter <i>Abschnitt bearbeiten → Diesen Abschnitt zuklappbar machen</i>.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ VARIANTE 3 ══════════════════ -->
+<div class="variant">
+  <div class="head">
+    <span class="tag">Auffällig</span>
+    <h2>Variante 3 — Kachel-Navigation mit Detailblock</h2>
+  </div>
+  <div class="meta">
+    <div><b>Webparts:</b> Quicklinks-Webpart (Layout „Schaltfläche") für die drei roten Kacheln · darunter 3-Spalten-Abschnitt mit je 1 Text-Webpart</div>
+    <div><b>Aufwand:</b> gering bis mittel</div>
+    <div><b>Was besser wird:</b> Kräftiger Farbakzent nach einem langen weißen Seitenabschnitt. Die Kacheln können gleichzeitig auf weiterführende Seiten verlinken — aus einer reinen Textliste wird Navigation.</div>
+  </div>
+  <div class="stage">
+    <div class="stage-inner">
+      <h2 class="sec">Wie geht es weiter?</h2>
+      <p class="lead">Unsere drei Schwerpunkte — jede Kachel führt zu mehr Informationen.</p>
+      <div class="tiles">
+        <a class="tile-btn" href="#"><span class="ico">📊</span><span class="t">Ergebnisse</span><span class="s">Was wir erreicht haben</span></a>
+        <a class="tile-btn" href="#"><span class="ico">🌱</span><span class="t">Wachstum</span><span class="s">Wo wir hinwollen</span></a>
+        <a class="tile-btn" href="#"><span class="ico">🔗</span><span class="t">Vernetzen</span><span class="s">Mit wem wir arbeiten</span></a>
+      </div>
+      <div class="cols3">
+        <div class="detail">
+          <h3>Ergebnisse</h3>
+          <ul>
+            <li>Ergebnisse aus Arbeitsgruppen veröffentlichen</li>
+            <li>Diskussion der Themen, u.a. mit der Geschäftsführung</li>
+            <li>Unseren Beitrag zum Kulturwandel leisten</li>
+          </ul>
+        </div>
+        <div class="detail">
+          <h3>Wachstum</h3>
+          <ul>
+            <li>Netzwerk weiter ausbauen</li>
+            <li>Mitmach-Möglichkeiten für operative Mitarbeiterinnen schaffen</li>
+            <li>Sprecherinnen und Organisationsgremium weiter auf- und ausbauen</li>
+          </ul>
+        </div>
+        <div class="detail">
+          <h3>Vernetzen</h3>
+          <ul>
+            <li>Vernetzung über Transdev hinaus ausbauen</li>
+            <li>Bestehende Partnerschaften vertiefen</li>
+            <li>Gemeinsame Formate mit anderen Netzwerken entwickeln</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note">
+        <b>Hinweis:</b> Im Quicklinks-Webpart tragen sich Titel und Beschreibung pro Link einzeln ein. Das Symbol kommt entweder aus der SharePoint-Symbolbibliothek oder du tippst ein Emoji vor den Titel.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ VARIANTE 4 ══════════════════ -->
+<div class="variant">
+  <div class="head">
+    <span class="tag">Pflegeleicht</span>
+    <h2>Variante 4 — Listen-Karten mit Status</h2>
+  </div>
+  <div class="meta">
+    <div><b>Webparts:</b> SharePoint-Liste + <b>Listen-Webpart</b> in der Galerie-Ansicht, gestaltet über <b>JSON-Ansichtsformatierung</b></div>
+    <div><b>Aufwand:</b> mittel — einmalig einrichten, danach am einfachsten zu pflegen</div>
+    <div><b>Was besser wird:</b> Die Inhalte stehen in einer Liste statt im Seitentext. Änderungen macht ihr in der Liste, ohne die Seite zu bearbeiten — und ohne dass jemand versehentlich das Layout zerschießt. Der Status-Chip zeigt auf einen Blick, was schon läuft.</div>
+  </div>
+  <div class="stage bg-soft">
+    <div class="stage-inner">
+      <h2 class="sec">Wie geht es weiter?</h2>
+      <p class="lead">Unsere aktuellen Schwerpunkte — gepflegt in der Liste „Netzwerk-Roadmap".</p>
+      <div class="lcards">
+        <div class="lcard">
+          <div class="top"><span class="ico">📊</span><h3>Ergebnisse</h3><span class="badge b-run">läuft</span></div>
+          <ul>
+            <li>Ergebnisse aus Arbeitsgruppen veröffentlichen</li>
+            <li>Diskussion der Themen, u.a. mit der Geschäftsführung</li>
+            <li>Unseren Beitrag zum Kulturwandel leisten</li>
+          </ul>
+        </div>
+        <div class="lcard">
+          <div class="top"><span class="ico">🌱</span><h3>Wachstum</h3><span class="badge b-plan">geplant</span></div>
+          <ul>
+            <li>Netzwerk weiter ausbauen</li>
+            <li>Mitmach-Möglichkeiten für operative Mitarbeiterinnen schaffen</li>
+            <li>Sprecherinnen und Organisationsgremium weiter auf- und ausbauen</li>
+          </ul>
+        </div>
+        <div class="lcard">
+          <div class="top"><span class="ico">🔗</span><h3>Vernetzen</h3><span class="badge b-cont">fortlaufend</span></div>
+          <ul>
+            <li>Vernetzung über Transdev hinaus ausbauen</li>
+            <li>Bestehende Partnerschaften vertiefen</li>
+            <li>Gemeinsame Formate mit anderen Netzwerken entwickeln</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note">
+        <b>Wichtig:</b> JSON-Ansichtsformatierung ist eine offizielle SharePoint-Funktion und braucht <i>keinen</i> App-Katalog und <i>keine</i> Admin-Rechte — es genügt, Besitzerin der Liste zu sein. Es ist aber die einzige Variante hier, bei der etwas Code im Spiel ist. Wenn du dich dafür entscheidest, schreibe ich dir die fertige JSON-Vorlage zum Einfügen.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ BONUS ══════════════════ -->
+<div class="variant">
+  <div class="head">
+    <span class="tag">Zusatz</span>
+    <h2>Bonus — Partnernetzwerke als eigenes Band</h2>
+  </div>
+  <div class="meta">
+    <div><b>Webparts:</b> 3-Spalten-Abschnitt (Hintergrund „Neutral") · je Spalte 1 Bild-Webpart mit Bildunterschrift</div>
+    <div><b>Aufwand:</b> gering — braucht die drei Logos</div>
+    <div><b>Was besser wird:</b> Im aktuellen Entwurf hängen die Partnernetzwerke als verschachtelte Unter-Aufzählung in der dritten Spalte. Das bricht den Rhythmus, weil dort plötzlich eine zweite Ebene auftaucht, die es in den anderen Spalten nicht gibt. Als eigener Abschnitt darunter bekommen die Partner mehr Gewicht und die drei Karten bleiben gleichwertig.</div>
+  </div>
+  <div class="stage bg-neutral">
+    <div class="stage-inner partners">
+      <h3>Wir sind im Austausch mit</h3>
+      <p class="sub">Netzwerke, mit denen wir uns regelmäßig verbinden</p>
+      <div class="plogos">
+        <div class="plogo"><span class="ph">Logo</span>WiM — Women in Mobility</div>
+        <div class="plogo"><span class="ph">Logo</span>Frauennetzwerk Scheidt&amp;Bachmann</div>
+        <div class="plogo"><span class="ph">Logo</span>Gruppenweites „DEI-Network"</div>
+      </div>
+      <div class="note" style="text-align:left;">
+        <b>Ohne Logos:</b> Falls du keine Logos verwenden darfst oder keine bekommst, funktioniert stattdessen ein Quicklinks-Webpart im Layout „Kompakt" — dann stehen die drei Namen als verlinkte Zeilen nebeneinander.
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
